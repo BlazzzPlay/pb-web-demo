@@ -60,10 +60,14 @@ const log = (s) => { document.getElementById('db').textContent += s + '\n'; cons
 async function api(path, opts={}) {
   const h = opts.headers || {};
   if (token) h['Authorization'] = 'Bearer ' + token;
-  const r = await fetch(path, { ...opts, headers: { 'Content-Type': 'application/json', ...h } });
+  if (!opts.method || opts.method === 'GET') {
+    const r = await fetch(path, { ...opts, headers: h });
+    return r.json();
+  }
+  h['Content-Type'] = 'application/json';
+  const r = await fetch(path, { ...opts, headers: h });
   return r.json();
 }
-
 async function login() {
   const le = document.getElementById('le'); le.style.display = 'none';
   log('Login...');
